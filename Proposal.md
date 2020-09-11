@@ -8,17 +8,19 @@ Our proposed software for this semester's project is [Spring Security](https://s
 
 ## Hypothetical Operating Envrionment
 
-Spring Security is commonly used for securing websites and APIs. Here is where we'll describe a hypothetical website that uses it.
+Spring Security is commonly used for securing websites and APIs, so we will consider the hypothetical eCommerce website SpringStore for the purposes of this exercise. SpringStore is the world's top online seller of springs and spring paraphernalia, and has thousands of users who purchase springs and write product reviews. SpringStore also provides functionality for businesses to sell their own springs through their website, and offers both a web interface and a rich API to these 3rd party sellers for managing their inventory and sales. SpringStore allows users to register using an email and password or via external authentication through Facebook and Google.
+
+Users of SpringStore expect that their accounts are secured via strong password encryption, and that their saved payment information is encrypted at rest. Users also expect that other users don't have access to their accounts or order history, and that fraudulent orders can't be placed on their behalf. 3rd party sellers using SpringStore expect that their vendor accounts are only usable by authorized members of their company, and that their inventory and prices can't be tampered with by unauthorized users. SpringStore as a company expects to provide security and privacy to its users, and to have their backend systems secured against threats so that customer data can't be compromised, financial data can't be tampered with, and confidential company operating data won't be exposed. 
 
 `Systems engineering view diagram here`
 
 ### Threats perceived by users
 
-Scary things!
+Users of SpringStore are aware of the countless security breaches other eCommerce sites have had over the years. Hackers may try to attack a website directly to place fraudulent orders, may use stolen credit card information to order products, or may try to compromise backend services to steal user information which is then used or resold on the dark web. Individual user accounts may also be compromised by phishing attempts, and insecure passwords could be easily broken and used to place fraudulent orders or even update reseller prices and inventory. The owners of SpringStore are also aware of attacks such as denial of service and SQL injection, and work hard to prevent these from occurring.
 
 ### Security features in the software
 
-Authentication! Authorization! Passwords! Things!
+SpringStore makes use of Spring Security to keep their springs secure. To keep passwords safe, they use Spring Security's provided BCrypt hashing algorithm so that an attacker would only recover irreversible hashes if a user database was compromised. Saved credit card information is encrypted in the database using Spring Security's AES encryption module. Requests made to all backend services are authenticated either using a username and password or by OAuth2 and JWTs. User and service accounts are assigned roles and authorities which allow access to the minimum functionality each account needs to do its job. These authorities are collected in Spring's Principal object, which is checked by the Filter Chain whenever a request is made against a backend service, and denied if the appropriate permissions are not present. Spring Security also provides protection against cross site scripting (XSS) and cross site request forgery (CSRF) through included modules, which sanitize data and restrict access to resources to only known origins.
 
 ## Team Motivation
 
