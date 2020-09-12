@@ -41,11 +41,13 @@ I plan to finish this up Sunday morning. */
 ## Licensing and Contributions
 Contributor Code of Conduct
 You will be banned if you
-⦁ Talk about or share sexual explicit material
-⦁ If you troll
-⦁ Cyber bulling
-⦁ Plagiarize
-⦁ Unethical or Illegal behavior
+
+* Talk about or share sexual explicit material
+* If you troll
+* Cyber bulling
+* Plagiarize
+* Unethical or Illegal behavior
+
 Project maintainers will remove code, commits, or wiki edits, if these rules are violated. The Code of Conduct applies to the project both public and private space.
 Before submitting an issue Search GitHub to see if it is already reported.
 Discuss contribution with committers before submitting a pull request, if it is a bug fix or a typo correction that can be fixed with out bothering the committers.
