@@ -48,7 +48,7 @@ You will be banned if you
 * Plagiarize
 * Unethical or Illegal behavior
 
-/*Project maintainers will remove code, commits, or wiki edits, if these rules are violated. The Code of Conduct applies to the project both public and private space.
+Project maintainers will remove code, commits, or wiki edits, if these rules are violated. The Code of Conduct applies to the project both public and private space.
 Before submitting an issue Search GitHub to see if it is already reported.
 Discuss contribution with committers before submitting a pull request, if it is a bug fix or a typo correction that can be fixed with out bothering the committers.
 Fill out and submit the Contributor License Agreement located at https://cla.pivotal.io/sign/spring before you contribute.
@@ -57,7 +57,7 @@ Do not use long branch names pick short branch names. The example is the proffer
 Follow whitespace and formatting convention. The formatting convention is in the Mind the whitespace section of CONTRIBUTING.adoc.
 Update spring-securityx.y.rnc for schema changes do not change spring-securityx.y.xsd.
 Squash commits, examples are located here https://book.git-scm.com/4_interactive_rebasing.html.
-Use real name in your git commits.*/
+Use real name in your git commits.
 
 License is Aache License 2.0, spring-projects/spring-security can be used for Commercial use. You can Modify, Distribute. You can use in Patent use and Private use. You can not Trademark use, there is no Liability or warranty.
 
