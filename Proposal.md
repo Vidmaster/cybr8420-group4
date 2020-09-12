@@ -62,4 +62,5 @@ As of September 9th 2020, the NIST NVD lists 5 records of reported vulnerabiliti
 
 ## Teamwork Reflection
 
-Everything was awesome!
+Project Planning and Reflection. Andrew Bullock, Bob Copley, Henry McNeil, Kevin Neubauer and Bryan Tomey. Mr. Neubauer contributed in the beginning and was a valued contributing member, unfortunately Mr. Neubauer had to drop the class and we lost a valuable member. One of the issues we had to overcome early on is that all of us work . Finding a time to meet and how to divide class work around everyone's work schedule was a challenge. Another challenge was matching assignments to people based on what they wanted to do. To over come this each individual was given two parts of the Project proposal to work on. This was assigned by the team leader to keep it fair.
+
