@@ -39,8 +39,26 @@ argon2 link - https://github.com/spring-projects/spring-security/tree/master/cry
 I plan to finish this up Sunday morning. */
 
 ## Licensing and Contributions
+Contributor Code of Conduct
+You will be banned if you
+⦁ Talk about or share sexual explicit material
+⦁ If you troll
+⦁ Cyber bulling
+⦁ Plagiarize
+⦁ Unethical or Illegal behavior
+Project maintainers will remove code, commits, or wiki edits, if these rules are violated. The Code of Conduct applies to the project both public and private space.
+Before submitting an issue Search GitHub to see if it is already reported.
+Discuss contribution with committers before submitting a pull request, if it is a bug fix or a typo correction that can be fixed with out bothering the committers.
+Fill out and submit the Contributor License Agreement located at https://cla.pivotal.io/sign/spring before you contribute.
+Create your branch from the master to be submitted as a pull request.
+Do not use long branch names pick short branch names. The example is the proffered branch name type. Example: pro-fixed.
+Follow whitespace and formatting convention. The formatting convention is in the Mind the whitespace section of CONTRIBUTING.adoc
+Update spring-securityx.y.rnc for schema changes do not change spring-securityx.y.xsd
+Squash commits, examples are located here https://book.git-scm.com/4_interactive_rebasing.html
+Use real name in your git commits.
 
-About licensing and contributing to spring
+License is Aache License 2.0, spring-projects/spring-security can be used for Commercial use. You can Modify, Distribute. You can use in Patent use and Private use. You can not Trademark use, there is no Liability or warranty.
+
 
 ## Security History of Spring Security
 
