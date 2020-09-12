@@ -32,39 +32,44 @@ I plan to finish this up Sunday morning. */
 
 ## Project Description
 
+Spring Security is one component of the Spring Framework, and is focused on providing [authentication and authorization, as well as protection from common exploits](https://docs.spring.io/spring-security/site/docs/5.4.0/reference/html5/#features). Spring Security is meant to integrate with other libraries, which would provide functionality such as HTTP endpoints and database connectivity to a larger application. It is a very popular piece of the framework, being used in over 100,000 other projects on GitHub, and boasting over 400 contributors. The project was first released publicly in 2008, and the most recent release was version 5.4.0 on September 8, 2020. The Spring Framework is written almost entirely in Java, though some components are written in [Kotlin](https://kotlinlang.org/) as well. [OpenHub](https://www.openhub.net/p/spring-security) reports it to be nearly 270,000 lines of code, and provides a COCOMO estimate of 70 years of effort to create the library.
+
+The Spring Framework as a whole is exceptionally well documented, and Spring Security documentation can be found at https://spring.io/projects/spring-security. This documentation includes API and reference documentation, as well as tutorials for simple tasks such as [securing a web app](https://spring.io/guides/gs/securing-web/) and [architecture overviews](https://spring.io/guides/topicals/spring-security-architecture) for the more advanced user. Numerous tutorials are available from other sources, such as [YouTube](https://www.youtube.com/watch?v=her_7pa0vrg), [Baeldung](https://www.baeldung.com/security-spring) and [javaTpoint](https://www.javatpoint.com/spring-security-tutorial) to introduce users to a variety of topics.
+
 /*List files targeted for changes, including referenced files, creators, lines of code, language (java) 
 brcypt link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/bcrypt
 scrypt link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/scrypt
 argon2 link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/argon2
-I plan to finish this up Sunday morning. */
+I plan to finish this up Sunday morning. 
+*/
 
 ## Licensing and Contributions
-Contributor Code of Conduct
-You will be banned if you
-
+Spring's Contributor Code of Conduct states that you will be banned if you:
 * Talk about or share sexual explicit material
 * If you troll
 * Cyber bulling
 * Plagiarize
-* Unethical or Illegal behavior
+* Engage in Unethical or Illegal behavior
 
 Project maintainers will remove code, commits, or wiki edits, if these rules are violated. The Code of Conduct applies to the project both public and private space.
-Before submitting an issue Search GitHub to see if it is already reported.
-Discuss contribution with committers before submitting a pull request, if it is a bug fix or a typo correction that can be fixed with out bothering the committers.
-Fill out and submit the Contributor License Agreement located at https://cla.pivotal.io/sign/spring before you contribute.
-Create your branch from the master to be submitted as a pull request.
-Do not use long branch names pick short branch names. The example is the proffered branch name type. Example: pro-fixed.
-Follow whitespace and formatting convention. The formatting convention is in the Mind the whitespace section of CONTRIBUTING.adoc.
-Update spring-securityx.y.rnc for schema changes do not change spring-securityx.y.xsd.
-Squash commits, examples are located here https://book.git-scm.com/4_interactive_rebasing.html.
-Use real name in your git commits.
 
-License is Aache License 2.0, spring-projects/spring-security can be used for Commercial use. You can Modify, Distribute. You can use in Patent use and Private use. You can not Trademark use, there is no Liability or warranty.
+Additionally, the project provides some further guidance to contributors:
+- Before submitting an issue Search GitHub to see if it is already reported.
+- Discuss contribution with committers before submitting a pull request, if it is a bug fix or a typo correction that can be fixed with out bothering the committers.
+- Fill out and submit the Contributor License Agreement located at https://cla.pivotal.io/sign/spring before you contribute.
+- Create your branch from the master to be submitted as a pull request.
+- Do not use long branch names pick short branch names. The example is the preferred branch name type. Example: pro-fixed.
+- Follow whitespace and formatting convention. The formatting convention is in the Mind the whitespace section of CONTRIBUTING.adoc.
+- Update spring-securityx.y.rnc for schema changes, do not change spring-securityx.y.xsd.
+- Squash commits, examples are located here https://book.git-scm.com/4_interactive_rebasing.html.
+- Use real name in your git commits.
+
+The Spring framework uses the Apache License 2.0, so spring-projects/spring-security can be used for Commercial use. You can Modify and Distribute the code, and can use it in Patent use and Private use. You can not Trademark use, and there is no Liability or warranty provided.
 
 
 ## Security History of Spring Security
 
-The Spring Security software is composed of several modules built with Java.  These modules provide security features for Spring-based applications. The latest stable release is Spring Security 5.3.4, which was released on August 5th 2020. 
+The Spring Security software is composed of several modules built with Java.  These modules provide security features for Spring-based applications. The latest stable release is Spring Security 5.4.0, which was released on September 8th 2020. 
 
 As of September 9th 2020, the NIST NVD lists 5 records of reported vulnerabilities [1]. 
 [CVE-2020-5408](https://nvd.nist.gov/vuln/detail/CVE-2020-5408)	Various versions prior to 5.3.2, used a fixed null initialization vector with CBC Mode in the implementation of the queryable text encryptor. A malicious user with access to the data that has been encrypted using such an encryptor may be able to derive the unencrypted values using a dictionary attack.
@@ -87,8 +92,12 @@ As of September 9th 2020, the NIST NVD lists 5 records of reported vulnerabiliti
 * [Spring Security Repo](https://github.com/spring-projects/spring-security)
 
 ### Team roles
+The team decided on shared roles after the first team meeting, so technical, writing, and administrative burdens will be shared equally across the team, with flexibility based on external obligations and other coursework as needed. Our team consists of:
+* Henry McNeil - Team Lead
+* Andrew Bullock
+* Bob Copley
+* Bryan Tomey
 
 ## Teamwork Reflection
 
-Project Planning and Reflection. Andrew Bullock, Bob Copley, Henry McNeil, Kevin Neubauer and Bryan Tomey. Mr. Neubauer contributed in the beginning and was a valued contributing member, unfortunately Mr. Neubauer had to drop the class and we lost a valuable member. One of the issues we had to overcome early on is that all of us work . Finding a time to meet and how to divide class work around everyone's work schedule was a challenge. Another challenge was matching assignments to people based on what they wanted to do. To over come this each individual was given two parts of the Project proposal to work on. This was assigned by the team leader to keep it fair.
-
+Project Planning and Reflection. Andrew Bullock, Bob Copley, Henry McNeil, Kevin Neubauer and Bryan Tomey. Mr. Neubauer contributed in the beginning and was a valued contributing member, unfortunately Mr. Neubauer had to drop the class and we lost a valuable member. One of the issues we had to overcome early on is that all of us work. Finding a time to meet and how to divide class work around everyone's work schedule was a challenge. Another challenge was matching assignments to people based on what they wanted to do. To over come this each individual was given two parts of the Project proposal to work on. This was assigned by the team leader to keep it fair.
