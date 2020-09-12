@@ -24,11 +24,19 @@ SpringStore makes use of Spring Security to keep their springs secure. To keep p
 
 ## Team Motivation
 
-TBD
+/*Discuss how we wanted project to focus on the process of open source contribution rather than solving a technical issue in software. By
+choosing a relatively well known problem, we could focus attention on the steps necessary to contribute while still providing valuable input.
+Discuss password generators in general, what security they provide, reason password generators need tweaking as computers get faster. Discuss 
+team's plan to optimize spring's password generators by increasing workload factor without taking more resources per cycle, say. 
+I plan to finish this up Sunday morning. */
 
 ## Project Description
 
-All about spring security
+/*List files targeted for changes, including referenced files, creators, lines of code, language (java) 
+brcypt link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/bcrypt
+scrypt link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/scrypt
+argon2 link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/argon2
+I plan to finish this up Sunday morning. */
 
 ## Licensing and Contributions
 
