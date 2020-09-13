@@ -4,7 +4,7 @@ CYBR8420 Software Assurance, University of Nebraska Omaha, Fall 2020
 
 ## Proposed Software
 
-Our proposed software for this semester's project is [Spring Security](https://spring.io/projects/spring-security), one of the components of the [Spring Framework](https://spring.io/). This project can be found on GitHub at https://github.com/spring-projects/spring-security. Our team is tentatively planning to address [an issue pertaining to the default cycles used by BCrypt](https://github.com/spring-projects/spring-security/issues/7411) but may change course as needed.
+Our proposed software for this semester's project is [Spring Security](https://spring.io/projects/spring-security), one of the components of the [Spring Framework](https://spring.io/). This project can be found on GitHub at https://github.com/spring-projects/spring-security. Our team is tentatively planning to address [an issue pertaining to the default cycles used by BCrypt, SCrypt, and Argon2](https://github.com/spring-projects/spring-security/issues/7411) but may change course as needed.
 
 ## Hypothetical Operating Envrionment
 
@@ -24,11 +24,9 @@ SpringStore makes use of Spring Security to keep their springs secure. To keep p
 
 ## Team Motivation
 
-/*Discuss how we wanted project to focus on the process of open source contribution rather than solving a technical issue in software. By
-choosing a relatively well known problem, we could focus attention on the steps necessary to contribute while still providing valuable input.
-Discuss password generators in general, what security they provide, reason password generators need tweaking as computers get faster. Discuss 
-team's plan to optimize spring's password generators by increasing workload factor without taking more resources per cycle, say. 
-I plan to finish this up Sunday morning. */
+Looking at the course syllabus learning objectives, our team chose to focus on a well-understood technical problem so that we could focus our attention on the open-source contribution process rather than the product itself. By picking a Java-coded, well understood program, we can spend less time learning the intricacies of an unknown language or spend overlong trying to ferret out a complex coding error, which is not the point of this course, and spend our time learning how to contribute to open source communities generally. 
+
+Our specific choice for this software, Spring Security's password generation tools, are all written in Java and based on source material that has been translated into Java. Password generators are most effective when the amount of time necessary to generate a password is long enough to make brute force decryption sufficiently time intensive. Spring Software standards are for the process to take about one second. But as run now, three of the processes only take tens of milliseconds. Our goal would be to increase the time load for each of these generators in such a way that the increased load cannot be bypassed by someone attempting to break the cypher and retrieve the user's unencrypted password.
 
 ## Project Description
 
@@ -36,12 +34,18 @@ Spring Security is one component of the Spring Framework, and is focused on prov
 
 The Spring Framework as a whole is exceptionally well documented, and Spring Security documentation can be found at https://spring.io/projects/spring-security. This documentation includes API and reference documentation, as well as tutorials for simple tasks such as [securing a web app](https://spring.io/guides/gs/securing-web/) and [architecture overviews](https://spring.io/guides/topicals/spring-security-architecture) for the more advanced user. Numerous tutorials are available from other sources, such as [YouTube](https://www.youtube.com/watch?v=her_7pa0vrg), [Baeldung](https://www.baeldung.com/security-spring) and [javaTpoint](https://www.javatpoint.com/spring-security-tutorial) to introduce users to a variety of topics.
 
-/*List files targeted for changes, including referenced files, creators, lines of code, language (java) 
-brcypt link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/bcrypt
-scrypt link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/scrypt
-argon2 link - https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/argon2
-I plan to finish this up Sunday morning. 
-*/
+For this project we will be examining three password generators based on three different algorithms: Blowfish, SCrypt, and Argon2. While each of the password generators themselves are relatively short, the algorithms they run can be quite complex. We will have to be careful to adjust the parameters in keeping with the spirit, intent, and strengths of the original cyphers. 
+
+The files we will be looking at are:
+Note - all file paths begin with https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/
+
+BCryptPasswordEncoder.java, Dave Syer, 175 lines, ../bcrypt/BCryptPasswordEncoder.java
+Bcrypt.java, Damien Miller, 761 lines, ../bcrypt/BCrypt.java
+
+SCryptPasswordEncoder.java, Shazin Sadakath & Rob Winch , 186 lines , ../scrypt/SCryptPasswordEncoder.java
+
+Argon2PasswordEncoder.java, Simeon Macke, 144 lines, ../argon2/Argon2PasswordEncoder.java
+Argon2EncodingUtils.java, Simeon Macke, 176 lines, ../argon2/Argon2EncodingUtils.java
 
 ## Licensing and Contributions
 Spring's Contributor Code of Conduct states that you will be banned if you:
