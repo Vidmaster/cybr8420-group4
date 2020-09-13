@@ -12,7 +12,8 @@ Spring Security is commonly used for securing websites and APIs, so we will cons
 
 Users of SpringStore expect that their accounts are secured via strong password encryption, and that their saved payment information is encrypted at rest. Users also expect that other users don't have access to their accounts or order history, and that fraudulent orders can't be placed on their behalf. 3rd party sellers using SpringStore expect that their vendor accounts are only usable by authorized members of their company, and that their inventory and prices can't be tampered with by unauthorized users. SpringStore as a company expects to provide security and privacy to its users, and to have their backend systems secured against threats so that customer data can't be compromised, financial data can't be tampered with, and confidential company operating data won't be exposed. 
 
-`Systems engineering view diagram here`
+### Systems Engineering View Diagram
+![System Engineering View](https://github.com/Vidmaster/cybr8420-group4/blob/master/ProjectSEV.png)
 
 ### Threats perceived by users
 
