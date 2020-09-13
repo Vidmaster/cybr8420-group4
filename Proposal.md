@@ -40,12 +40,10 @@ For this project we will be examining three password generators based on three d
 The files we will be looking at are:
 Note - all file paths begin with https://github.com/spring-projects/spring-security/tree/master/crypto/src/main/java/org/springframework/security/crypto/
 
-BCryptPasswordEncoder.java, Dave Syer, 175 lines, ../bcrypt/BCryptPasswordEncoder.java
-Bcrypt.java, Damien Miller, 761 lines, ../bcrypt/BCrypt.java
-
-SCryptPasswordEncoder.java, Shazin Sadakath & Rob Winch , 186 lines , ../scrypt/SCryptPasswordEncoder.java
-
-Argon2PasswordEncoder.java, Simeon Macke, 144 lines, ../argon2/Argon2PasswordEncoder.java
+BCryptPasswordEncoder.java, Dave Syer, 175 lines, ../bcrypt/BCryptPasswordEncoder.java \
+Bcrypt.java, Damien Miller, 761 lines, ../bcrypt/BCrypt.java \
+SCryptPasswordEncoder.java, Shazin Sadakath & Rob Winch , 186 lines , ../scrypt/SCryptPasswordEncoder.java \
+Argon2PasswordEncoder.java, Simeon Macke, 144 lines, ../argon2/Argon2PasswordEncoder.java \
 Argon2EncodingUtils.java, Simeon Macke, 176 lines, ../argon2/Argon2EncodingUtils.java
 
 ## Licensing and Contributions
@@ -98,11 +96,13 @@ As of September 9th 2020, the NIST NVD lists 5 records of reported vulnerabiliti
 
 ### Team roles
 The team decided on shared roles after the first team meeting, so technical, writing, and administrative burdens will be shared equally across the team, with flexibility based on external obligations and other coursework as needed. Our team consists of:
-* Henry McNeil - Team Lead
-* Andrew Bullock
-* Bob Copley
-* Bryan Tomey
+* Henry McNeil (@Vidmaster) - Team Lead
+* Andrew Bullock (@abullockuno)
+* Bob Copley (@moezilla402)
+* Bryan Tomey (@btomey)
 
 ## Teamwork Reflection
 
 Project Planning and Reflection. Andrew Bullock, Bob Copley, Henry McNeil, Kevin Neubauer and Bryan Tomey. Mr. Neubauer contributed in the beginning and was a valued contributing member, unfortunately Mr. Neubauer had to drop the class and we lost a valuable member. One of the issues we had to overcome early on is that all of us work. Finding a time to meet and how to divide class work around everyone's work schedule was a challenge. Another challenge was matching assignments to people based on what they wanted to do. To over come this each individual was given two parts of the Project proposal to work on. This was assigned by the team leader to keep it fair.
+
+We also initially struggled to determine a communication mechanism that would work well for everyone, as Bob and Bryan have limited communications access during business hours due to the nature of their work. We settled on Slack as the rest of the team was unlikely to be communicating much during business hours either, and this has proven to be highly effective for us so far.
