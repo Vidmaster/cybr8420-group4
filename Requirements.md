@@ -4,7 +4,47 @@
 
 All LucidChart diagrams are available at https://app.lucidchart.com/invitations/accept/2c9fcfe6-8eb9-4e8a-8bd3-dc143cb7393c
 
-### Case 1: Make a purchase
+### Case 1: Create an Account
+User stories:
+* As a customer, I want to create an account in the Spring Store so that I can use them for all my spring related needs.
+* As a customer, I want to be able to use a password so I can log into my account later.
+
+<use case diagram>
+
+Derived security requirements:
+* The system must be able to uniquely identify each account with a username and password.
+* The system must provide the ability to encrypt data at rest and decrypt it when needed.
+* The system must have a secure password checking mechanism.
+
+
+### Case 2: Login to Account
+User stories:
+* As a customer, I want to return to my account in the Spring Store so that I can use them for all my spring related needs.
+* As a customer, I want to be able to reuse a password so I can log into my account again.
+
+<use case diagram>
+
+Derived security requirements:
+* The system must be able to uniquely identify each account with a username and password.
+* The system must provide the ability to encrypt data at rest and decrypt it when needed.
+* The system must have a secure password checking mechanism.
+
+
+### Case 3: Browse Inventory
+User stories:
+* As a customer, I want to search the Spring Store inventory so that I can use them for all my spring related needs.
+* As a customer, I want to be able to add items to my shopping cart for immediate or later purchase.
+* As a customer, I want to be able to view product ratings.
+* As a customer, I want to be able to add product ratings.
+
+<use case diagram>
+
+Derived security requirements:
+* The system must provide the ability to encrypt data at rest and decrypt it when needed.
+* The system must have a secure text entry checking mechanism.
+
+
+### Case 4: Make a purchase
 User stories:
 * As a customer, I want to purchase springs through Spring Store so that I can use them for all my spring related needs.
 * As a customer, I want to be able to save my payment and shipping information for the next time I check out so that I can purchase springs more quickly in the future.
@@ -12,17 +52,24 @@ User stories:
 <use case diagram>
 
 Derived security requirements:
-* The system must provide the ability to encrypt data at rest and decrypt it when needed
-* The system must have a secure password checking mechanism
+* The system must provide the ability to encrypt data at rest and decrypt it when needed.
+* The system must have a secure password checking mechanism.
 
-  
-### Case 2
 
-### Case 3
+### Case 5: Manage a Vender Account
+User stories:
+* As a vender, I want to access the Spring Store payment system API so that I can use them to sell my spring-related products.
+* As a vender, I want to access the Spring Store customer address DB so that I can use them to sell my spring-related products.
+* As a vender, I want to access the Spring Store shipping API so that I can use them to sell my spring-related products.
+* As a vender, I want to access the Spring Store 3rd-Party inventory DB so that I can use them to sell my spring-related products.
 
-### Case 4
 
-### Case 5
+<use case diagram>
+
+Derived security requirements:
+* The system must provide the ability to encrypt data at rest and decrypt it when needed.
+* The system must provide account authorization protection. 
+* The system must have a secure password checking mechanism.
 
 
 ## Alignment of Security Requirements with Spring Security
