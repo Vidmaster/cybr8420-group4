@@ -9,7 +9,7 @@ User stories:
 * As a customer, I want to create an account in the Spring Store so that I can use them for all my spring related needs.
 * As a customer, I want to be able to use a password so I can log into my account later.
 
-<use case diagram>
+![Use case 1](images/case1.png)
 
 Derived security requirements:
 * The system must be able to uniquely identify each account with a username and password.
@@ -22,7 +22,7 @@ User stories:
 * As a customer, I want to return to my account in the Spring Store so that I can use them for all my spring related needs.
 * As a customer, I want to be able to reuse a password so I can log into my account again.
 
-<use case diagram>
+![Use case 2](images/case2.png)
 
 Derived security requirements:
 * The system must be able to uniquely identify each account with a username and password.
@@ -37,7 +37,7 @@ User stories:
 * As a customer, I want to be able to view product ratings.
 * As a customer, I want to be able to add product ratings.
 
-<use case diagram>
+![Use case 3](images/case3.png)
 
 Derived security requirements:
 * The system must provide the ability to encrypt data at rest and decrypt it when needed.
@@ -49,7 +49,7 @@ User stories:
 * As a customer, I want to purchase springs through Spring Store so that I can use them for all my spring related needs.
 * As a customer, I want to be able to save my payment and shipping information for the next time I check out so that I can purchase springs more quickly in the future.
 
-<use case diagram>
+![Use case 4](images/case4.png)
 
 Derived security requirements:
 * The system must provide the ability to encrypt data at rest and decrypt it when needed.
@@ -63,8 +63,7 @@ User stories:
 * As a vender, I want to access the Spring Store shipping API so that I can use them to sell my spring-related products.
 * As a vender, I want to access the Spring Store 3rd-Party inventory DB so that I can use them to sell my spring-related products.
 
-
-<use case diagram>
+![Use case 5](images/case5.png)
 
 Derived security requirements:
 * The system must provide the ability to encrypt data at rest and decrypt it when needed.
