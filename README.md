@@ -4,3 +4,4 @@ This is our repository for Software Assurance at the University of Nebraska, Oma
 
 ## Project Deliverables
 * [Project Proposal](Proposal.md)
+* [Requirements for Software Security Engineering](Requirements.md)
