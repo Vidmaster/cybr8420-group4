@@ -6,27 +6,27 @@ LucidChart diagrams for the following can be found at https://app.lucidchart.com
 ### Claim 1
 The application securely stores personal and financial data
 
-![/images/claim1.png](Assurance claim 1)
+![Assurance claim 1](/images/claim1.png)
 
 ### Claim 2
 Users can't access application resources for which they are not authorized
 
-![/images/claim2.png](Assurance claim 2)
+![Assurance claim 2](/images/claim2.png)
 
 ### Claim 3
 The website mitigates fradulent purchases
 
-![/images/claim3.png](Assurance claim 3)
+![Assurance claim 3](/images/claim3.png)
 
 ### Claim 4
 Authentication protocols prevent unauthorized access to a user's account
 
-![/images/claim4.png](Assurance claim 4)
+![Assurance claim 4](/images/claim4.png)
 
 ### Claim 5
 The website secures online purchases
 
-![/images/claim5.png](Assurance claim 5)
+![Assurance claim 5](/images/claim5.png)
 
 ## Alignment with Spring Security
 In our assurance cases, we present a number of pieces of supporting evidence. For each of these pieces, we will discuss whether it aligns with functionality provided by Spring Security or not. If it does not align with Spring Security we will also discuss whether it might be a good candidate for inclusion in the framework in the future.
