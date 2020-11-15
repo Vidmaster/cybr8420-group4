@@ -7,7 +7,7 @@ For the purposes of this project, we found the model above to capture all of the
 
 ## Observations
 ### Relation to Spring Security
-When creating an account or login into the account, the users account can be vulnerable to password-related attacks such as dictionary attacks. Spring security can stop these attacks by using Pre-Authentication Scenarios; this is were Spring security Authenticates and then waits for external authentication from SiteMidner or Java EE security to authenticate before it allows account access. Pre-Authentication can also stop credential stuffing and unauthorized password changing. 
+When creating an account or login into the account, the users account can be vulnerable to password-related attacks such as dictionary attacks. Spring security can stop these attacks by using Pre-Authentication Scenarios; this is where Spring security Authenticates and then waits for external authentication from SiteMidner or Java EE security to authenticate before it allows account access. Pre-Authentication can also stop credential stuffing and unauthorized password changing. 
 
 Another attack against a Users account can be brute force, to stop brute force spring security can implement an Authentication Failure Event Listener. The Listener will record all authentication failures. If a user fails more than a predetermined amount, the account will be locked for 24 hours and the IP address that is linked to the attempt will be stored.
 
