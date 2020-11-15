@@ -7,9 +7,9 @@ For the purposes of this project, we found the model above to capture all of the
 
 ## Observations
 ### Relation to Spring Security
-When creating an account or login into the account, the users account can be vulnerable to password-related attacks such as dictionary attacks. Spring security can stop these attacks by using Pre-Authentication Scenarios; this is where Spring security Authenticates and then waits for external authentication from SiteMidner or Java EE security to authenticate before it allows account access. Pre-Authentication can also stop credential stuffing and unauthorized password changing. 
+When creating an account or logging in to the account, the user's account can be vulnerable to password-related attacks such as dictionary attacks. Spring security can stop these attacks by using Pre-Authentication Scenarios; this is where Spring security Authenticates and then waits for external authentication from SiteMidner or Java EE security to authenticate before it allows account access. Pre-Authentication can also stop credential stuffing and unauthorized password changing. 
 
-Another attack against a Users account can be brute force, to stop brute force spring security can implement an Authentication Failure Event Listener. The Listener will record all authentication failures. If a user fails more than a predetermined amount, the account will be locked for 24 hours and the IP address that is linked to the attempt will be stored.
+Another attack against a user's account can be brute force, to stop brute force spring security can implement an Authentication Failure Event Listener. The Listener will record all authentication failures. If a user fails more than a predetermined amount, the account will be locked for 24 hours and the IP address that is linked to the attempt will be stored.
 
 The login password can be vulnerable to MITM attack, as the password is sent in plaintext to the authentication service where it is checked against a hashed value to determine if it matches. Pre-Authentication would not stop this attack, it would just stop the Attacker from gaining immediate access to the account. Salting and Hashing passwords before sending to the database, then only sending thru TLS sessions is the best way to stop MITM from getting anything of value.
 
