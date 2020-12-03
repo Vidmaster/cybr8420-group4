@@ -1,32 +1,120 @@
 #Code Analysis for Software Security Engineering
-## Part 1: Code Review
-### Code Review Strategy
+## Code Review Strategy
 
-To be written by Bob
+Spring Security is a very large project containing nearly 40,000 files in the full GitHub project, so our team knew that reviewing all the findings from an automated tool would be very difficult, and a full manual review of the code would be impossible. Because Spring Security is also a very popular project we guessed that it would have a relatively small number of actual vulnerabilities that could be readily detected by an automated scanner. We decided to use an automated scanning tool for our initial review, to first focus on vulnerabilities in the code reported by the tool, and then to guide our manual review and any additional work based on those findings. Based on past experience, we selected SonarCloud as our automated scanner of choice, and ran a scan against the project by forking the repository, adding the relevant plugins to `build.gradle`, and then running the command `./gradlew sonarqube` in the base directory of the project. After some difficulties with getting tests to execute in the local development environment, we decided to disable them by adding the flags `-x appBeforeIntegrationTest -x test -x integrationTest -x appAfterIntegrationTest -x compileIntegrationTestJava` to the command to skip these stages. This successfully produced scan output, and SonarCloud reported 179 bugs and 34 vulnerabilities in Spring Security.
 
-### Findings From Manual Review
+After briefly examining the vulnerabilities reported by the scanner, we planned to conduct additional manual review around the areas of the code pertaining to critical security functions described in previous assignments (encryption, password hashing, XSS, CSRF, and management of resource access) to determine if any vulnerabilities could be identified in those sections. As we continued our examinations, we also realized that many of the scanner-discovered vulnerabilities were likely to be false positives and would require manual review to confirm or deny. Because of the different backgrounds and levels of experience of our team members, we all adopted different strategies in our code reviews. Bob and Bryan focused on the vulnerabilities and security hotspots found by automated scans, Andrew focused on the password hashing functionality and associated CWEs, and Henry focused on the authentication and authorization functionality in the core and web modules of Spring Security. The findings of all these reviews are discussed in the next section and are examined by CWE.
 
-Henry and Andrew working
+## Findings From Code Review
 
-### Findings from Automated Scans
+The results of the full SonarCloud scan we performed are here: https://sonarcloud.io/dashboard?id=Vidmaster_spring-security
 
-Link to full SonarCloud scan: https://sonarcloud.io/dashboard?id=Vidmaster_spring-security
+### CWE-916: Use of Password Hash With Insufficient Computational Effort
 
-To be analyzed by Bob and Bryan
+CWE Link: https://cwe.mitre.org/data/definitions/916.html
 
-## Part 2: Key Findings and Contributions
-### Summary of Key Findings
+Code manually reviewed:
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acrypto%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fcrypto%2Fargon2
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acrypto%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fcrypto%2Fscrypt
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acrypto%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fcrypto%2Fbcrypt
+
+In our automated vulnerability search of Spring Security, one of the results concerned password generation efforts being too simple. This maps to CWE-916: Use of Password Hash with Insufficient Computational Effort. The automated results suggested shying away from functions such as SCrypt in favor of more robust versions like BCrypt or PBKDF2. Additionally, there is an open ticket for increasing the password generation effort of several of the generation schema. We can tackle the ticket and the underlying problem using a two-pronged approach. First, we must continue to offer backwards compatibility for applications using the old model so that they can still log in, but we can require a password reset after authentication to push them to the new models. Second, we can adjust the functions to "tick up" their complexity. The CWE gives us several options to increase security against an offline, massively parallel attack:
+* The amount of CPU time required to compute the hash ("stretching")
+* The amount of memory required to compute the hash ("memory-hard" operations)
+* Including a random value, along with the password, as input to the hash computation ("salting")
+* Given a hash, there is no known way of determining an input (e.g., a password) that produces this hash value, other than by guessing possible inputs ("one-way" hashing)
+* Relative to the number of all possible hashes that can be generated by the scheme, there is a low likelihood of producing the same hash for multiple different inputs ("collision resistance")
+
+The last three are intrinsic properties of the various cryptographic functions, and we want to be sure we do not modify those in any way that could affect their security. Of the first two, the best option is to increase CPU runtime, as we do not want to surpass the underlying system memory requirements. To do so, we must make slight alterations to the password generator functions to increase their workload. We will examine three of them.
+
+**BCrypt** \
+In the BCrypt password generator, the main function allows for setting a strength value. If a value is not given, a default value is used. On line 100 we found this: `this.strength = (strength == -1) ? 10 : strength;`. This value represents a power of 2 rather than a liner progression. By setting this value to 12, we can quadruple the processing time, which should keep BCrypt optimized for a few more years.
+
+**Argon2** \
+For this generator, much is the same. The main function allows for setting complexity, and if a value is not present, the default value is used. On line 57 we found `private static final int DEFAULT_ITERATIONS = 3;`. However, Argon2 works differently, and is normally implemented in a more memory intensive function. To increase the iterations too much might make limited memory systems take exponentially longer, but reducing the memory requirements to increase iterations also can weaken relative security to massively parallel offline attacks. For this one, increasing iterations to around 25 will increase the security to an appropriate workload, but due to its unique memory requirements this might be an unworkable solution for low-memory systems (4GB or less).
+
+**SCrypt** \
+This generator works based on the idea of an "expensive salt". Interestingly, even though it was flagged by the automated processes as being less secure, in real-world testing it takes longer than BCrypt on some systems. We can either redirect users to the BCrypt standard, which is what the automated software recommends, or we can increase the workload of SCrypt. To do so, we found line 74 controls the default settings : `this(16384, 8, 1, 32, 64);`. We can change the 16k value to a 64k value and achieve similar increases to workload as we saw when increasing the BCrypt default to 12.
+
+### CWE-327: Use of a Broken or Risky Cryptographic Algorithm
+
+CWE Link: https://cwe.mitre.org/data/definitions/327.html
+
+Automated scan links: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4zjeErsVRQsvEi7&open=AXXxd4zjeErsVRQsvEi7 (several in this file), https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4wweErsVRQsvEgU&open=AXXxd4wweErsVRQsvEgU, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd1axeErsVRQsvDsP&open=AXXxd1axeErsVRQsvDsP
+
+Several of the vulnerabilities reported by our automated scans were in this category due to a number of insecure password encoder implementations still existing within Spring Security. These encoders include MD4, MD5, SHA-1, LDAP, and SHA-256, all of which have known weaknesses and are no longer considered secure for the hashing and storage of passwords. On reviewing the code for these insecure implementations, all of the files are identified as being kept for backwards compatibility with legacy systems and are not planned to be removed from the framework. While this may appear concerning at first glance, all of the classes are marked with the `@Deprecated` annotation to discourage their use, and the JavaDoc for all of the classes contains multiple warnings, such as
+```
+/**
+ * This {@link PasswordEncoder} is provided for legacy purposes only and is not considered
+ * secure.
+ ...
+ * @deprecated Digest based password encoding is not considered secure. Instead use an
+ * adaptive one way function like BCryptPasswordEncoder, Pbkdf2PasswordEncoder, or
+ * SCryptPasswordEncoder. Even better use {@link DelegatingPasswordEncoder} which supports
+ * password upgrades. There are no plans to remove this support. It is deprecated to
+ * indicate that this is a legacy implementation and using it is considered insecure.
+ */
+```
+As these insecure implementations are not used by default and would require a developer to knowingly use them, we do not believe that this constitutes an actionable finding, and agree with the framework's decision not to remove their support. They can also be used in a beneficial manner when a system is upgraded by allowing existing users to continue to log in and be authenticated against older and insecure password hashes and then automatically updating their passwords to use a more secure hashing function such as BCrypt.
+
+### CWE-309: Use of Password System for Primary Authentication
 
 Henry working
 
-### Planned Contributions to Spring Security
+### CWE-836: Use of Password Hash Instead of Password for Authentication
 
-Henry and Andrew working
+Henry working
 
-### Project Board
+### CWE-611: Improper Restriction of XML External Entity Reference & CWE-827: Improper Control of Document Type Definition
+
+CWE Links: https://cwe.mitre.org/data/definitions/611.html, http://cwe.mitre.org/data/definitions/827.html
+
+Automated scan link: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd35PeErsVRQsvEVE&open=AXXxd35PeErsVRQsvEVE
+
+Bryan/Bob working this section
+
+### CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
+
+CWE Link: https://cwe.mitre.org/data/definitions/601.html
+
+Automated scan links: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd3-YeErsVRQsvEWN&open=AXXxd3-YeErsVRQsvEWN, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4LveErsVRQsvEZb&open=AXXxd4LveErsVRQsvEZb
+
+Bob working
+
+### CWE-807: Reliance on Untrusted Inputs in a Security Decision
+
+CWE Link: https://cwe.mitre.org/data/definitions/807.html
+
+Automated scan links: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4PpeErsVRQsvEZ8&open=AXXxd4PpeErsVRQsvEZ8, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4PdeErsVRQsvEZ3&open=AXXxd4PdeErsVRQsvEZ3, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4PdeErsVRQsvEZ4&open=AXXxd4PdeErsVRQsvEZ4
+
+Bob working
+
+### CWE-476: NULL Pointer Dereference
+
+Henry working, found a few examples in bugs and reviewed for context
+
+### CWE-551: Incorrect Behavior Order: Authorization Before Parsing and Canonicalization
+
+Henry working, manually reviewing a few things
+
+### CWE-294: Authentication Bypass by Capture-replay
+
+Henry working, reviewing and testing locally
+
+## Summary of Key Findings
+
+Henry working.
+
+Initial thoughts are that the ticket around CWE-916 should be addressed. It could be beneficial to work on making 2FA easier in spring security as well or adding that to another Spring project so that custom code doesn't need to be written every time to mitigate CWE-309. The XXE from CWE-611 should be corrected but likely isn't exploitable, and there may even be a real use case where someone is building their web.xml using XXEs which would then require a configurable thing
+
+## Planned Contributions to Spring Security
+
+TBD, can write this after previous section
+
+## Project Board
 
 The team project board for this assignment is located at https://github.com/Vidmaster/cybr8420-group4/projects/5
 
-### Teamwork Reflection
+## Teamwork Reflection
 
 To be completed by Bob
