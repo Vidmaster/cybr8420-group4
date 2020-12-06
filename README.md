@@ -7,3 +7,4 @@ This is our repository for Software Assurance at the University of Nebraska, Oma
 * [Requirements for Software Security Engineering](Requirements.md)
 * [Assurance Cases for Software Security Engineering](AssuranceCases.md)
 * [Designing for Software Security Engineering](Design.md)
+* [Code Analysis for Software Security Engineering](CodeAnalysis.md)
