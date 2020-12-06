@@ -7,7 +7,7 @@ After briefly examining the vulnerabilities reported by the scanner, we planned 
 
 ## Findings From Code Review
 
-The results of the full SonarCloud scan we performed are here: https://sonarcloud.io/dashboard?id=Vidmaster_spring-security
+The results of the full SonarCloud scan performed on Spring Security are available here: https://sonarcloud.io/dashboard?id=Vidmaster_spring-security. While SonarCloud does allow comments and analysis on issues within the application itself, we did not make use of this functionality. All of the results of our investigation appear below.
 
 ### CWE-916: Use of Password Hash With Insufficient Computational Effort
 
@@ -57,13 +57,40 @@ Several of the vulnerabilities reported by our automated scans were in this cate
 ```
 As these insecure implementations are not used by default and would require a developer to knowingly use them, we do not believe that this constitutes an actionable finding, and agree with the framework's decision not to remove their support. They can also be used in a beneficial manner when a system is upgraded by allowing existing users to continue to log in and be authenticated against older and insecure password hashes and then automatically updating their passwords to use a more secure hashing function such as BCrypt.
 
+Additionally, Bryan noticed a bug associated with the LDAP password encoder was also reported. Acording to [spring-security issues 8801](https://github.com/spring-projects/spring-security/issues/8801) when calling the `encoders.put("ldap", neworg.springframework.security.crypto.password.LdapShaPasswordEncoder())` method, the method will strip off the `{SSHA}` hash and not reapply it. This is expected and the old encoded password needs to be migrated. This is an insecure handle and if not mitagated properly can expose passwords in ldap encryption format. Using a secure hashing algorithm to prevent encoders.put("ldap", new org.springframework.security.crypto.password.LdapShaPasswordEncoder()) from stripping the SSHA can be accomplished by calling a method from GitHub called java_test. This method was created by user lathspell. In this
+method SHA is exchanged to SHA-512 in the messageDigest and the prefix and length constants are adjusted. This creates a secure use of ldap.
+
 ### CWE-309: Use of Password System for Primary Authentication
 
-Henry working
+CWE Link: https://cwe.mitre.org/data/definitions/309.html
+
+Code manually reviewed:
+* Authentication package: https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication%2FUsernamePasswordAuthenticationToken.java
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication%2Fdao%2FAbstractUserDetailsAuthenticationProvider.java
+
+This CWE states that "The use of password systems as the primary means of authentication may be subject to several flaws or shortcomings, each reducing the effectiveness of the mechanism" and reminds us that "if an attacker can steal or guess a user's password, they are given full access to their account". While Spring Security does provide secure password encoding implementations such as BCrypt, it does not provide built-in support for multi-factor authentication and requires users to implement this on their own. This implementation is not difficult and [numerous](https://www.baeldung.com/spring-security-two-factor-authentication-with-soft-token) [tutorials](https://medium.com/javarevisited/spring-boot-two-factor-authentication-78e00aa10176) [exist](https://dzone.com/articles/two-factor-authentication-in-spring-webflux-rest-a) showing how it can be done, but any custom implemented security code is risky and may contain other vulnerabilities worse than what it is meant to prevent. To some extent, Spring Security does provide alternatives to this such as support for OAuth, SAML, and other external authentication mechanisms that require additional security beyond just a password, but this is still a real weakness in the framework and something that should be targeted for future development.
 
 ### CWE-836: Use of Password Hash Instead of Password for Authentication
 
-Henry working
+CWE Link: https://cwe.mitre.org/data/definitions/836.html
+
+Code manually reviewed:
+* Authentication package: https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication
+* Cryptography package: https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acrypto%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fcrypto
+
+CWE-836 typically occurs when an application puts the password hashing computation on the client instead of the server in an effort to reduce computational load. This allows an attacker to submit a stolen password hash without knowing the underlying password however. The security of an application that uses password hashes for authentication in this manner is dramatically reduced and is essentially at the same level as an application which simply stores passwords in plaintext. In the course of reviewing the authentication and crypto packages of Spring Security, we did not find any evidence that this vulnerability is present in the code. While a user *could* potentially use the `NoOpPasswordEncoder` to perform this function, that class explicitly states that it is not secure and contains several warnings against its use in a production environment. All of the other `PasswordEncoder` implementations, even the insecure ones such as MD5, store a hash in the database and take a plaintext password which is then hashed and compared to the stored value.
+
+### CWE-294: Authentication Bypass by Capture-replay
+
+CWE Link: https://cwe.mitre.org/data/definitions/294.html
+
+Code manually reviewed:
+* Authentication package: https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication%2FUsernamePasswordAuthenticationToken.java
+* https://sonarcloud.io/code?id=Vidmaster_spring-security&selected=Vidmaster_spring-security%3Acore%2Fsrc%2Fmain%2Fjava%2Forg%2Fspringframework%2Fsecurity%2Fauthentication%2Fdao%2FAbstractUserDetailsAuthenticationProvider.java
+
+Capture-Replay attacks can occur when an attacker captures traffic containing an authentication request or other action and replays those network packets to a server, thus obtaining credentials or causing a server to perform another undesirable action. Spring Security does not provide protection against this type of attack in its default implementations of the `UsernamePasswordAuthenticationToken` and other authentication mechanisms, though its authentication mechanisms are written such that they use a `Principal` and `Credentials` which are defined as generic `Object`s. This allows users to extend these mechanisms using a nonce or other technique for preventing capture-replay attacks. However, even with the addition of a nonce, an attacker capturing unencrypted traffic would still have access to the plaintext username and password in the request and could simply use those to login to the application normally. While this weakness seems significant, the simplest way to prevent its exploitation is through the use of HTTPS, which is trivial to implement in Spring Security.
 
 ### CWE-611: Improper Restriction of XML External Entity Reference & CWE-827: Improper Control of Document Type Definition
 
@@ -71,7 +98,33 @@ CWE Links: https://cwe.mitre.org/data/definitions/611.html, http://cwe.mitre.org
 
 Automated scan link: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd35PeErsVRQsvEVE&open=AXXxd35PeErsVRQsvEVE
 
-Bryan/Bob working this section
+Another vulnerability that appeared in our automated scan of Spring Security concerned XXE, or XML External Entities, which can be exploited when an application parses any XML documents. This vulnerability occurred in `web/src/main/java/org/springframework/security/web/authentication/preauth/j2ee/WebXmlMappableAttributesRetriever.java`. This XML vulnerability allows the user of internal or external file system/network access that could lead to confidential file disclosures. The code that is not handle properly is the private Document getDocument class.
+```
+private Document getDocument(InputStream aStream) {
+		try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    factory.setValidating(false);
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			builder.setEntityResolver(new MyEntityResolver());
+			return builder.parse(aStream);
+		}
+```  
+In the above code you can see that builds a new instance called factory and then builds a new document but when it returns the parse it doesn't handle the access for external DTD ore the access for external schema. This can allow a Server Side Request Forgery of SSRF attack or a confidential file disclosure. This mishandling of XML parser could also allow a DDOS attack, like the [billion laughs attack](https://en.wikipedia.org/wiki/Billion_laughs_attack).
+
+A proper way to handle this attack would be to set the external DTD to nothing  and also set the external SCHEMA to nothing. In java that would be written as `setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "")` and `setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")`. This handles the XML external while not adding anything that will interfere with the original code. Below is how the `getDocument` method would look with the code added.
+```
+private Document getDocument(InputStream aStream) {
+		try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setValidating(false);
+			factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+			factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			builder.setEntityResolver(new MyEntityResolver());
+			return builder.parse(aStream);
+		}
+```
+These two lines added to the class will allow for less vulnerability and better availability of spring-security. As this code is specifically used to parse the `web.xml` file, it is unlikely that this constitutes an exploitable vulnerability in the typical usage of a Spring application. To conduct such an attack on a running system, an attacker would need the ability to modify the contents of web.xml within the packaged application and then cause the application to restart so the file is reloaded. A more likely attack scenario would be a user building an application and copying an insecure `web.xml` file containing an XXE payload without realizing it was present, as the `web.xml` file is (at least in Henry's experience) not typically modified once it's been added to a project, and only needs to be changed from the default in edge cases that a developer may not be able to solve easily without searching for a solution online. Even though this may not be easily exploited, the fix is trivial enough that it would make sense to implement.
 
 ### CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
 
@@ -79,7 +132,14 @@ CWE Link: https://cwe.mitre.org/data/definitions/601.html
 
 Automated scan links: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd3-YeErsVRQsvEWN&open=AXXxd3-YeErsVRQsvEWN, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4LveErsVRQsvEZb&open=AXXxd4LveErsVRQsvEZb
 
-Bob working
+Per the vulnerability in SonarCloud:
+> User provided data, such as URL parameters, POST data payloads, or cookies, should always be considered untrusted and tainted. Applications performing HTTP redirects based on tainted data could enable an attacker to redirect users to a malicious site to, for example, steal login credentials.
+>
+> This problem could be mitigated in either of the following ways:
+> * Validate the user provided data based on a whitelist and reject input not matching
+> * Redesign the application to not perform redirects based on user provided data
+
+This vulnerability exists in the `AbstractRetryEntryPoint` in Spring Security, which is used to "launch a web channel" [according to the API documentation](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/access/channel/ChannelEntryPoint.html), as well as in the `AbstractAuthenticationTargetUrlRequestHandler`, which is involved in the [handling of redirects during login and logout](https://docs.spring.io/spring-security/site/docs/4.2.15.RELEASE/apidocs/org/springframework/security/web/authentication/AbstractAuthenticationTargetUrlRequestHandler.html). Based on the code alone this appears insecure, but from our examination of the code we are unable to determine whether this data is truly user controlled or if the method is only called after the headers and request have been modified by trusted parts of the framework.
 
 ### CWE-807: Reliance on Untrusted Inputs in a Security Decision
 
@@ -87,29 +147,37 @@ CWE Link: https://cwe.mitre.org/data/definitions/807.html
 
 Automated scan links: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4PpeErsVRQsvEZ8&open=AXXxd4PpeErsVRQsvEZ8, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4PdeErsVRQsvEZ3&open=AXXxd4PdeErsVRQsvEZ3, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd4PdeErsVRQsvEZ4&open=AXXxd4PdeErsVRQsvEZ4
 
-Bob working
+Per the vulnerability in SonarCloud:
+>According to the Oracle Java API, the `HttpServletRequest.getRequestedSessionId()` method: "Returns the session ID specified by the client. This may not be the same as the ID of the current valid session for this request. If the client did not specify a session ID, this method returns null."
+>
+>The session ID it returns is either transmitted in a cookie or a URL parameter so by definition, nothing prevents the end-user from manually updating the value of this session ID in the HTTP request. Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions.
+
+Several instances of this vulnerability were detected in Spring Security, all involving the use of `getRequestedSessionId()`. However, there is no reason to believe that these constitute a security vulnerability. One of the uses of this method is in the `ConcurrentSessionFilter` where it occurs in a debugging statement `"Requested session ID " + request.getRequestedSessionId() + " has expired."`, and the other two uses are in the `SessionManagementFilter` where the code checks if the sessionId is null and then logs the message `"Request requested invalid session id %s",	request.getRequestedSessionId()`.
 
 ### CWE-476: NULL Pointer Dereference
 
-Henry working, found a few examples in bugs and reviewed for context
+CWE Link: https://cwe.mitre.org/data/definitions/476.html
 
-### CWE-551: Incorrect Behavior Order: Authorization Before Parsing and Canonicalization
+Automated scan links: https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd43neErsVRQsvEkZ&open=AXXxd43neErsVRQsvEkZ, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd2nzeErsVRQsvD8s&open=AXXxd2nzeErsVRQsvD8s, https://sonarcloud.io/project/issues?id=Vidmaster_spring-security&issues=AXXxd2q0eErsVRQsvD9i&open=AXXxd2q0eErsVRQsvD9i
 
-Henry working, manually reviewing a few things
-
-### CWE-294: Authentication Bypass by Capture-replay
-
-Henry working, reviewing and testing locally
+A common and recurring bug reported by the automated scan was the possibility of a `NullPointerException` being thrown in various places throughout the code. This exception can be handled in various ways within the code, but would typically cause the application to either crash or exhibit unexpected behavior. While there were far too many instances reported to thoroughly check and understand each one, the ones examined above appear to be safe and would only occur during application startup due to missing method annotations or improper configuration. In many ways this behavior is desirable, and the only improvement that could be made in this situation is to check for null values and throw a more informative exception such as an `IllegalStateException` or to use a statement like `Assert.notNull(value, "relevant message")` at these locations. Such a change would incur a performance penalty and could require significant code changes due to Java's handling of checked exceptions.
 
 ## Summary of Key Findings
 
-Henry working.
+Based on our analysis above, including manual review and an automated scan of the code, we identified four major CWEs that could be addressed to improve the overall security of the project. These are as follows:
+* [CWE-916: Use of Password Hash With Insufficient Computational Effort](https://cwe.mitre.org/data/definitions/916.html): This weakness is easily fixed and we believe it to be relatively low risk, as updating default values for these encoders would still allow for them to be overridden where appropriate. As computers become more powerful and cloud resources become cheaper these defaults will require periodic changes to keep the default implementation secure.
+* [CWE-309: Use of Password System for Primary Authentication](https://cwe.mitre.org/data/definitions/309.html): As hinted in the previous finding, strongly hashed passwords alone are not necessarily enough to keep a system secure in the face of a determined adversary with significant computing resources. Spring Security is compatible with multi-factor authentication schemes, but these all require a custom implementation and external libraries to support, or require delegating authentication to an OAuth2 provider such as Facebook, Twitter, or GitHub and depending on these services to provide MFA support. Due to evolving security best practices, we strongly believe that Spring Security should improve its support for MFA and provide examples of its correct usage. The creation of a separate Spring MFA project would also be a possible alternative if the framework creators did not believe it was appropriate to include this in Spring Security.
+* [CWE-611: Improper Restriction of XML External Entity Reference](https://cwe.mitre.org/data/definitions/611.html) and associated [CWE-827: Improper Control of Document Type Definition](https://cwe.mitre.org/data/definitions/827.html): While this does not appear to be an exploitable vulnerability, the framework contains a potentially dangerous implementation of the standard XML parser with no restrictions around XXE or DTD. Given that XXE is \#4 on the 2017 OWASP Top 10, and can be exploited to perform denial of service, information theft, and [even remote code execution](https://airman604.medium.com/from-xxe-to-rce-with-php-expect-the-missing-link-a18c265ea4c7) in some cases, this weakness should be reviewed and fixed.
 
-Initial thoughts are that the ticket around CWE-916 should be addressed. It could be beneficial to work on making 2FA easier in spring security as well or adding that to another Spring project so that custom code doesn't need to be written every time to mitigate CWE-309. The XXE from CWE-611 should be corrected but likely isn't exploitable, and there may even be a real use case where someone is building their web.xml using XXEs which would then require a configurable thing
+We did not review them due to time constraints, but we also noticed a number of vulnerabilities within the project's `samples` package, including weaknesses like incorrect method access preventing authorization checks from being properly applied. As these are not "production code" they are not as serious, but we believe that the samples provided in a security project should themselves be secure so that developers who use them as reference don't proceed to reimplement known weaknesses in their own applications.
 
 ## Planned Contributions to Spring Security
 
-TBD, can write this after previous section
+While we had initially planned to have a pull request submitted to fix the issues related to CWE-916, the Spring Security project is difficult to build and test locally due to its dependency on particular Java versions and system cryptography extensions, and neither Henry nor Andrew were able to get a full project build to pass in the time they allocated to it. We would still like to pursue this though once the semester is over and we have more time available to troubleshoot.
+
+The other CWEs we identified should also be opened as tickets with the project, though we plan to do some additional validation and testing of these issues to ensure they are accurate and reproducible before opening these. This is also being held up by the previously mentioned build issues, and should be opened once the semester is over. The XXE issue in particular is of interest to Henry as he was involved in fixing an exploit of this type in a product at his workplace where denial of service and information theft were possible.
+
+A final area of contribution that we have identified in [past assignments](https://github.com/Vidmaster/cybr8420-group4/blob/master/Requirements.md#spring-security-documentation-review) as well as this one is the sample code and documentation. Ideally these portions of the repository should be reviewed, known vulnerabilities fixed, documentation written and cleaned up, and the whole sections of the project containing samples and documentation need to be made more obvious and accessible. Some [tickets have](https://github.com/spring-projects/spring-security/issues/8327) [been opened](https://github.com/spring-projects/spring-security/issues/8821) in this area already, and we would like to review the current state of these efforts in more detail before opening new tickets or doing unnecessary work. A major contributor to the projected stated on one of these tickets "We should also hold off on the sample rewrites that I'm doing right now" and there is a separate [Spring Security Samples](https://github.com/spring-projects/spring-security-samples) project so it is unclear if there are already efforts to this end taking place.
 
 ## Project Board
 
@@ -117,4 +185,4 @@ The team project board for this assignment is located at https://github.com/Vidm
 
 ## Teamwork Reflection
 
-To be completed by Bob
+For the code review we came together as a team and started working on ideas before thanksgiving break. This allowed the team more time to gather ideas and discuss roles. Andrew was able to start us off with his CWE-916 and with it we could style our documents to match his work without have Henry make them match later. Bob was able to put together a vulnerabilities template that helped collaboration also. Bryan and Henry worked together on the XML parser and this allowed for both members to expanded their ideas and come up with possible fixes for the issue. The group was face with the common issue of Henry, Bob and Bryan having to work and Andrew still needing to help out more at home. Bryan couldn't contribute as much during the weekday because of added workload at his place of work. Bob was able to help Bryan by taking on more of the Findings from automated code scanning. Between home life Covid and work the extra time we gave ourselves allowed for a more relaxed pace.
