@@ -181,7 +181,7 @@ A final area of contribution that we have identified in [past assignments](https
 
 ## Project Board
 
-The team project board for this assignment is located at https://github.com/Vidmaster/cybr8420-group4/projects/5
+The team project board for this assignment is located at https://github.com/Vidmaster/cybr8420-group4/projects/5. The majority of our collaboration, review, and discussion took place on Slack and Zoom.
 
 ## Teamwork Reflection
 
